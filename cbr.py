@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
+from pydrive.drive import GoogleDrive
+from pydrive.auth import GoogleAuth
+
 
 
 def req(url: str):
@@ -71,16 +74,27 @@ def get_currency_data(start_date: str, end_date: str):
 
         print('Сохранение данных, подождите...')
 
-        """Сохранение таблицы"""
-        plt.savefig(f'picture.png')
+        """Сохранение графика"""
+        plt.savefig('currency_chart.png')
+        save_to_google_drive('currency_chart.png', 'currency_chart.png')
 
         """Сохранение файла"""
-        with open(f'rates.txt', 'w') as file:
+        with open(f'currency_data.txt', 'w') as file:
             for date, rate in zip(dates, rates):
                 file.write(f'{date}\t{10}\t{rate}\n')
+        save_to_google_drive('currency_data.txt', 'currency_data.txt')
         plt.show()
 
         return print(f"График и файл сохранены")
+def save_to_google_drive(file_path, file_name):
+    gauth = GoogleAuth()
+    gauth.LocalWebserverAuth()  # Аутентификация через локальный веб-сервер
+    drive = GoogleDrive(gauth)
+
+    file = drive.CreateFile({'title': file_name})
+    file.SetContentFile(file_path)
+    file.Upload()
+
 
 
 def main():
