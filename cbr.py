@@ -5,9 +5,8 @@ from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 
 
-
 def req(url: str):
-    '''Парсит код страницы'''
+    """Парсит код страницы"""
     response = requests.get(url)
     data = response.text
     return data
@@ -28,19 +27,20 @@ def find_currency(data):
     return float(str(mas[4]).replace(',', '.')) / int(mas[2])
 
 
-def change_CZK_to_RUB(CZK, CZK_curs):
+def change_czk_to_rub(czk, czk_curs):
     """Перевод крон в рубли"""
-    return print(f"{CZK} чешских крон = {(CZK * CZK_curs).__round__(5)} рублей")
+    return print(f"{czk} чешских крон = {(czk * czk_curs).__round__(5)} рублей")
 
 
-def change_RUB_to_CZK(RUB, CZK_curs):
+def change_rub_to_czk(rub, czk_curs):
     """Перевод рублей в кроны"""
-    return print(f"{RUB} рублей = {(RUB / CZK_curs).__round__(5)} чешских крон")
+    return print(f"{rub} рублей = {(rub / czk_curs).__round__(5)} чешских крон")
 
 
 def get_currency_data(start_date: str, end_date: str):
     """"""
-    url = f'https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.Posted=True&UniDbQuery.mode=1&UniDbQuery.date_req1=&UniDbQuery.date_req2=&UniDbQuery.VAL_NM_RQ=R01760&UniDbQuery.From={start_date}&UniDbQuery.To={end_date}'
+    url = f'https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.Posted=True&UniDbQuery.mode=1&UniDbQuery.date_req1' \
+          f'=&UniDbQuery.date_req2=&UniDbQuery.VAL_NM_RQ=R01760&UniDbQuery.From={start_date}&UniDbQuery.To={end_date}'
     response = requests.get(url)
     dates = []  # массив для дат
     rates = []  # массив для курса
@@ -57,7 +57,6 @@ def get_currency_data(start_date: str, end_date: str):
                 cols = row.find_all('td')
                 if len(cols) >= 3:
                     date = cols[0].text
-                    count = cols[1].text
                     rate = float(cols[2].text.replace(',', '.'))
                     dates.append(date)
                     rates.append(rate)
@@ -86,6 +85,8 @@ def get_currency_data(start_date: str, end_date: str):
         plt.show()
 
         return print(f"График и файл сохранены")
+
+
 def save_to_google_drive(file_path, file_name):
     gauth = GoogleAuth()
     gauth.LocalWebserverAuth()  # Аутентификация через локальный веб-сервер
@@ -94,7 +95,6 @@ def save_to_google_drive(file_path, file_name):
     file = drive.CreateFile({'title': file_name})
     file.SetContentFile(file_path)
     file.Upload()
-
 
 
 def main():
@@ -110,27 +110,27 @@ def main():
 
         if choice == '1':
             print("Для выхода - 0")
-            data_curs_CZK = req(url_1)
-            CZK_curs = find_currency(data_curs_CZK)
+            data_curs_czk = req(url_1)
+            czk_curs = find_currency(data_curs_czk)
             while True:
-                if CZK_curs:
-                    CZK_count = float(input("Введите количество крон: "))
-                    if CZK_count == 0:
+                if czk_curs:
+                    czk_count = float(input("Введите количество крон: "))
+                    if czk_count == 0:
                         print('=' * 80)
                         break
-                    change_CZK_to_RUB(CZK_count, CZK_curs)
+                    change_czk_to_rub(czk_count, czk_curs)
 
         elif choice == '2':
             print("Для выхода - 0")
-            data_curs_CZK = req(url_1)
-            CZK_curs = find_currency(data_curs_CZK)
+            data_curs_czk = req(url_1)
+            czk_curs = find_currency(data_curs_czk)
             while True:
-                if CZK_curs:
-                    RUB_count = float(input("Введите количество рублей: "))
-                    if RUB_count == 0:
+                if czk_curs:
+                    rub_count = float(input("Введите количество рублей: "))
+                    if rub_count == 0:
                         print('=' * 80)
                         break
-                    change_RUB_to_CZK(RUB_count, CZK_curs)
+                    change_rub_to_czk(rub_count, czk_curs)
 
         elif choice == '3':
             start_date = input('Введите начальную дату (в формате dd_mm_yyyy): ')
