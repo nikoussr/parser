@@ -101,7 +101,9 @@ def save_to_google_drive(file_path, file_name):
 
 def pred():
     """Прогноз курса валюты"""
-    url = 'https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.Posted=True&UniDbQuery.so=1&UniDbQuery.mode=1&UniDbQuery.date_req1=&UniDbQuery.date_req2=&UniDbQuery.VAL_NM_RQ=R01760&UniDbQuery.From=21.04.2024&UniDbQuery.To=28.04.2024'
+    url = 'https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.Posted=True&UniDbQuery.so=1&UniDbQuery.mode=1' \
+          '&UniDbQuery.date_req1=&UniDbQuery.date_req2=&UniDbQuery.VAL_NM_RQ=R01760&UniDbQuery.From=21.04.2024' \
+          '&UniDbQuery.To=28.04.2024'
     response = requests.get(url)
     dates = []  # массив для дат
     rates = []  # массив для курса
@@ -135,8 +137,8 @@ def pred():
         print('Сохранение данных, подождите...')
 
         """Сохранение графика"""
-        plt.savefig('currency_chart.png')
-        save_to_google_drive('currency_chart.png', 'currency_chart.png')
+        plt.savefig('predicted_chart.png')
+        save_to_google_drive('predicted_chart.png', 'predicted_chart.png')
         plt.show()
         return print(f"График прогноза валюты сохранён")
 
