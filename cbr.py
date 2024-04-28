@@ -39,7 +39,7 @@ def change_rub_to_czk(rub, czk_curs):
 
 
 def get_currency_data(start_date: str, end_date: str):
-    """"""
+    """История курса валюты"""
     url = f'https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.Posted=True&UniDbQuery.mode=1&UniDbQuery.date_req1' \
           f'=&UniDbQuery.date_req2=&UniDbQuery.VAL_NM_RQ=R01760&UniDbQuery.From={start_date}&UniDbQuery.To={end_date}'
     response = requests.get(url)
@@ -89,6 +89,7 @@ def get_currency_data(start_date: str, end_date: str):
 
 
 def save_to_google_drive(file_path, file_name):
+    """Сохранение на Google Drive"""
     gauth = GoogleAuth()
     gauth.LocalWebserverAuth()  # Аутентификация через локальный веб-сервер
     drive = GoogleDrive(gauth)
@@ -99,7 +100,7 @@ def save_to_google_drive(file_path, file_name):
 
 
 def pred():
-    """"""
+    """Прогноз курса валюты"""
     url = 'https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.Posted=True&UniDbQuery.so=1&UniDbQuery.mode=1&UniDbQuery.date_req1=&UniDbQuery.date_req2=&UniDbQuery.VAL_NM_RQ=R01760&UniDbQuery.From=21.04.2024&UniDbQuery.To=28.04.2024'
     response = requests.get(url)
     dates = []  # массив для дат
@@ -147,7 +148,7 @@ def main():
         print('1. Перевод CZK в RUB')
         print('2. Перевод RUB в CZK')
         print('3. Получить историю курса валюты')
-        print('4. Получить историю курса валюты')
+        print('4. Получить прогоз курса валюты')
         print('0. Выход\n')
         choice = input('Введите номер действия: ')
         print('=' * 80)
@@ -188,7 +189,7 @@ def main():
             print('Выход из программы.')
             break
         else:
-            print('Некорректный ввод. Пожалуйста, выберите 1 или 2.')
+            print('Некорректный ввод.')
 
 
 if __name__ == '__main__':
