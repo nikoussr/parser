@@ -11,7 +11,7 @@ def get_sourse_html(url):
 
     try:
         driver.get(url=url)
-        time.sleep(15)
+        time.sleep(30)
 
         driver.find_element(By.CLASS_NAME, "styles-module-size_s-awPvv").click()
         print("YESS")

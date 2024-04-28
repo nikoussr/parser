@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
+import numpy as np
 
 
 def req(url: str):
@@ -97,6 +98,48 @@ def save_to_google_drive(file_path, file_name):
     file.Upload()
 
 
+def pred():
+    """"""
+    url = 'https://www.cbr.ru/currency_base/dynamics/?UniDbQuery.Posted=True&UniDbQuery.so=1&UniDbQuery.mode=1&UniDbQuery.date_req1=&UniDbQuery.date_req2=&UniDbQuery.VAL_NM_RQ=R01760&UniDbQuery.From=21.04.2024&UniDbQuery.To=28.04.2024'
+    response = requests.get(url)
+    dates = []  # массив для дат
+    rates = []  # массив для курса
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        table = soup.find('table', class_='data')
+
+        if table:
+            rows = table.find_all('tr')
+            for row in rows[:5]:
+                cols = row.find_all('td')
+                if len(cols) >= 3:
+                    date = cols[0].text
+                    rate = float(cols[2].text.replace(',', '.'))
+                    dates.append(date)
+                    rates.append(rate)
+
+        """Строим таблицу"""
+        plt.figure(figsize=(12, 6))
+        plt.scatter(dates, rates, marker='o', color='b')
+        z = np.polyfit(range(len(rates)), rates, 1)
+        p = np.poly1d(z)
+        plt.plot(dates, p(range(len(rates))), color="purple", linestyle="--")
+        plt.title('Прогноз курса чешской кроны')
+        plt.xlabel('Дата')
+        plt.ylabel('Курс чешской кроны за 10 ед. руб.')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+
+        print('Сохранение данных, подождите...')
+
+        """Сохранение графика"""
+        plt.savefig('currency_chart.png')
+        save_to_google_drive('currency_chart.png', 'currency_chart.png')
+        plt.show()
+        return print(f"График прогноза валюты сохранён")
+
+
 def main():
     url_1 = 'https://cbr.ru/currency_base/daily/'
     while True:
@@ -104,6 +147,7 @@ def main():
         print('1. Перевод CZK в RUB')
         print('2. Перевод RUB в CZK')
         print('3. Получить историю курса валюты')
+        print('4. Получить историю курса валюты')
         print('0. Выход\n')
         choice = input('Введите номер действия: ')
         print('=' * 80)
@@ -136,6 +180,9 @@ def main():
             start_date = input('Введите начальную дату (в формате dd_mm_yyyy): ')
             end_date = input('Введите конечную дату (в формате dd_mm_yyyy): ')
             get_currency_data(start_date, end_date)
+            print('=' * 80)
+        elif choice == '4':
+            pred()
             print('=' * 80)
         elif choice == '0':
             print('Выход из программы.')
